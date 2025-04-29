@@ -2,6 +2,8 @@
 
 Pro Planet is a project aimed at promoting sustainable practices and environmental awareness through technology.
 
+![logo](static/ProPlanet__1.png)
+
 ## Features
 - **Eco-friendly Tips**: Learn how to reduce your carbon footprint.
 - **Sustainability Tracker**: Track your progress in adopting green habits.
