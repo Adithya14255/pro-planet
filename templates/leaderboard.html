@@ -1,151 +1,439 @@
 <!DOCTYPE html>
-<html>
-<style>
-    *{
-        margin:0;
-        padding:0;
-        box-sizing:border-box;
-        font-family: sans-serif;
+<html lang="en">
 
-    }
-    body{
-        min-height:100vh;
-        background-image: url("{{ url_for('static',filename='leaderboard_bg.png')}}");
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-position: center;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        backdrop-filter: blur(40px);
-    }
-    table,th,td{
-        padding:30px;
-        border-collapse: collapse;
-        text-align:left;
-    }
-    .table_header{
-        width: 100%;
-        height: 10%;
-        background-color: #fff4;
-        padding:.8rem 1rem;
-    }
-    .table_body{
-        width: 95%;
-        max-height:calc(89% - 1.6rem);
-        background-color: rgba(255, 255, 255, 0.733);
-        margin:.8rem auto;
-        border-radius: .6rem;
-        overflow: auto;
-        color:black;
-    }
-    .table_body::-webkit-scrollbar{
-        width: 0.5rem;
-        height: 0.5rem;
-
-    }
-    .table_body:hover::-webkit-scrollbar-thumb{
-        visibility: visible;
-    }
-    .table_body::-webkit-scrollbar-thumb{
-        border-radius: .5rem;
-        background-color: #0004;
-        visibility: hidden;
-    }
-    table{
-        width:100%;
-    }
-    thead th{
-        position: sticky;
-        top:0;
-        left:0;
-        background-color: #1e9a2bfe;
-    }
-    tbody tr:nth-child(even){
-        background-color: #0000000b;
-    }
-    tbody tr:hover{
-        background-color: #fff6;
-    }
-    main.table{
-        width: 82vw;
-        height: 90vh;
-        background-color: #fff5;
-        backdrop-filter: blur(7px);
-        box-shadow: 0.4rem .8rem #0005;
-        border-radius:.8rem; 
-        overflow: hidden;
-    }
-    @media(max-width:1000px){
-        td:not(:first-of-type){
-            min-width:12.1rem;
-
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProPlanet - Leaderboard</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{{url_for('static',filename='favicon.ico')}}">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    }
-    .navi {
-      width: 100%;
-      z-index: 900;
-      background-color: transparent;
-      backdrop-filter: blur(20px);
-    }
 
-    .navi a {
-      margin-right: 40px;
-      width: auto;
-      float: right;
-      color: white;
-      text-align: center;
-      padding: 14px 20px;
-      text-decoration: none;
-      font-size: 20px;
-      margin-top: 70px;
-    }
+        :root {
+            --primary-color: #185c34;
+            --secondary-color: #1e4e32;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --bg-dark: #000000;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
 
-    .navi a:hover {
-      color: darkgrey;
-      padding: 30px;
-      transition: .5s;
-    }
+        body {
+            margin: 0;
+            height:100vh;
+            font-family: 'Poppins', sans-serif;
+            font-size: 17px;
+            background-color: #000;
+            color: var(--text-light);
+            line-height: 1.6;
+            background-image: url('https://images.unsplash.com/photo-1617957772097-93dc166cd335?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            position: relative;
+        }
 
-    .navi img {
-      height: 250px;
-      width: 250px;
-    }
-</style>
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 100%);
+            z-index: -1;
+        }
+
+        /* Header & Navigation */
+        .header {
+            width: 100%;
+            z-index: 900;
+            position: fixed;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 60px;
+            width: auto;
+            transition: all 0.3s ease;
+        }
+
+        .logo span {
+            font-size: 24px;
+            font-weight: 600;
+            margin-left: 10px;
+            color: var(--text-light);
+        }
+
+        .logo span .highlight {
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        /* Mobile menu */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Leaderboard Styles */
+        .content-container {
+            padding-top: 120px;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        .leaderboard-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--text-light);
+            font-size: 36px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .leaderboard-title span {
+            color: var(--primary-color);
+        }
+
+        .leaderboard-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: #000;
+        }
+
+        .leaderboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .leaderboard-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-size: 18px;
+            font-weight: 600;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+        }
+
+        .leaderboard-body {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .leaderboard-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .leaderboard-row:hover {
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        .leaderboard-row:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-rank {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .rank-medal {
+            margin-left: 5px;
+            font-size: 20px;
+        }
+
+        .rank-1 .rank-medal {
+            color: gold;
+        }
+
+        .rank-2 .rank-medal {
+            color: silver;
+        }
+
+        .rank-3 .rank-medal {
+            color: #cd7f32; /* bronze */
+        }
+
+        .leaderboard-name {
+            font-weight: 500;
+        }
+
+        .leaderboard-points {
+            font-weight: 700;
+            text-align: right;
+            color: var(--primary-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 30px 5%;
+            text-align: center;
+            color: var(--text-light);
+            bottom: 0;
+            left: 0;
+            position: absolute;
+            right: 0;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .copyright {
+            width: 100%;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        /* Responsive styles */
+        @media screen and (max-width: 900px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                position: absolute;
+                right: 0;
+                top: 100%;
+                background-color: rgba(0, 0, 0, 0.9);
+                backdrop-filter: blur(10px);
+                width: 100%;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 0;
+                gap: 20px;
+                transform: translateY(-150%);
+                transition: transform 0.5s ease;
+                z-index: -1;
+            }
+
+            .nav-links.active {
+                transform: translateY(0);
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .content-container {
+                padding: 100px 15px 30px;
+            }
+        }
+
+        @media screen and (max-width: 600px) {
+            .logo span {
+                display: none;
+            }
+            
+            .leaderboard-header, .leaderboard-row {
+                grid-template-columns: 0.8fr 1.2fr 1fr;
+                font-size: 16px;
+                padding: 15px 10px;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
 <body>
-    <div>
-        <div class="navi">
-            <img src="{{ url_for('static',filename='Logo3.png')}}" alt="imqg"></a>
-            <a class="active" href="{{url_for('task')}}">Tasks</a>
-            <a class="active" href="{{url_for('login')}}">LOGIN</a>
-            <a class="active" href="{{url_for('index')}}">ABOUT</a>
+    <!-- Header/Navigation -->
+    <header class="header">
+        <div class="logo">
+            <img src="{{url_for('static',filename='Logo3.png')}}" alt="ProPlanet Logo">
+            <span>Pro<span class="highlight">Planet</span></span>
         </div>
-        <main class="table">
-            <section class="table_header">
-                <h1>Leaderboard</h1>
-            </section>
-            <section class="table_body">
-                <table  >
-                    <thead>
-                    <tr>
-                        <th>RANK</th>
-                        <th>USER</th>
-                        <th>POINTS</th>
-                    </tr>
-                    </thead>
-                    {% for i in leaderboard %}
-                    <tbody>
-                    <tr>
-                        <td>{{i[0]}}</td>
-                        <td>{{i[1]['fullname']}}</td>
-                        <td><strong>{{i[1]['points']}}</strong></td>
-                    </tr>
-                    </tbody>
-                    {% endfor %}
+        <nav>
+            <ul class="nav-links">
+                <li><a href="{{url_for('index')}}">ABOUT</a></li>
+                <li><a href="{{url_for('leaderboard')}}">LEADER BOARD</a></li>
+                <li><a href="{{url_for('post')}}">POST</a></li>
+                <li><a href="{{url_for('task')}}">TASKS</a></li>
+                <li><a href="{{url_for('profile')}}">PROFILE</a></li>
+            </ul>
+        </nav>
+        <div class="hamburger">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+    </header>
 
-                </table>
-            </section>
-        </main>
+    <!-- Main Content - Leaderboard -->
+    <div class="content-container">
+        <h1 class="leaderboard-title">ProPlanet <span>Leaderboard</span></h1>
+        
+        <div class="leaderboard-card">
+            <div class="leaderboard-header">
+                <div>RANK</div>
+                <div>USER</div>
+                <div>POINTS</div>
+            </div>
+            
+            <div class="leaderboard-body">
+                {% for i in leaderboard %}
+                <div class="leaderboard-row rank-{{i[0]}}">
+                    <div class="leaderboard-rank">
+                        {{i[0]}}
+                        {% if i[0] == 1 %}
+                        <span class="rank-medal"><i class="fas fa-medal"></i></span>
+                        {% elif i[0] == 2 %}
+                        <span class="rank-medal"><i class="fas fa-medal"></i></span>
+                        {% elif i[0] == 3 %}
+                        <span class="rank-medal"><i class="fas fa-medal"></i></span>
+                        {% endif %}
+                    </div>
+                    <div class="leaderboard-name">{{i[1]['fullname']}}</div>
+                    <div class="leaderboard-points">{{i[1]['points']}}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Pro<span class="highlight">Planet</span></div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact Us</a>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2025 ProPlanet. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
 </body>
 </html>
